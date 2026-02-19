@@ -1,27 +1,44 @@
-def classify_triangle(a,b,c):
-    if a <= 0 or b <= 0 or c <= 0: 
+"""
+Triangle classification module.
+Determines the type of triangle based on side lengths.
+"""
+
+
+def classify_triangle(side_a, side_b, side_c):
+    """
+    Classify a triangle based on three side lengths.
+
+    Returns:
+        - "Equilateral"
+        - "Isosceles"
+        - "Scalene"
+        - "Right" appended if it is a right triangle
+        - "Not a triangle" if invalid
+    """
+
+    if side_a <= 0 or side_b <= 0 or side_c <= 0:
         return "Not a triangle"
 
-    if a + b <= c or a + c <= b or b + c <= a:
+    if side_a + side_b <= side_c or \
+       side_a + side_c <= side_b or \
+       side_b + side_c <= side_a:
         return "Not a triangle"
-    
 
-    sides = sorted([a, b, c])
-    a, b, c = sides
+    sides = sorted([side_a, side_b, side_c])
+    side_a, side_b, side_c = sides
 
-    triangle_type = "" 
-
-    if a == b == c: 
-        triangle_type = "Equilateral" 
-    elif a==b or b==c:
+    if side_a == side_b == side_c:
+        triangle_type = "Equilateral"
+    elif side_b in (side_a, side_c):
         triangle_type = "Isosceles"
     else:
-        triangle_type = "Scalene" 
+        triangle_type = "Scalene"
 
-    if a**2 + b**2 == c**2:
+    if side_a**2 + side_b**2 == side_c**2:
         triangle_type += " Right"
 
-    return triangle_type 
+    return triangle_type
+
 
 if __name__ == "__main__":
     print(classify_triangle(3, 4, 5))
