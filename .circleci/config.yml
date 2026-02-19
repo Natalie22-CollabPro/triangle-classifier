@@ -1,0 +1,81 @@
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+jobs:
+  test:
+    # Specify the execution environment
+    docker:
+      - image: cimg/python:3.11
+    
+    # Add steps to the job
+    steps:
+      - checkout
+      
+      # Install dependencies
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install --upgrade pip
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      # Run tests
+      - run:
+          name: Run tests
+          command: |
+            python -m unittest discover -v
+      
+      # Store test results
+      - store_test_results:
+          path: test-results
+
+  # Test against multiple Python versions
+  test-python-38:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install --upgrade pip
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run:
+          name: Run tests
+          command: python -m unittest discover -v
+
+  test-python-39:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install --upgrade pip
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run:
+          name: Run tests
+          command: python -m unittest discover -v
+
+  test-python-310:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install --upgrade pip
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run:
+          name: Run tests
+          command: python -m unittest discover -v
+
+# Orchestrate jobs using workflows
+workflows:
+  test-workflow:
+    jobs:
+      - test
+      - test-python-38
+      - test-python-39
+      - test-python-310
