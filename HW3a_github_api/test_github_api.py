@@ -11,30 +11,41 @@ from HW3a_github_api.github_api import get_repo_commit_counts
 class TestGitHubAPIMocked(unittest.TestCase):
 
     @patch("HW3a_github_api.github_api.requests.get")
-    def test_mocked_api(self, mock_get):
-        # Fake repo list response
+    def test_repo_commit_counts_mocked(self, mock_get):
+        # Mock response for: GET /users/<id>/repos
         repos_response = Mock()
         repos_response.status_code = 200
         repos_response.json.return_value = [
-            {"name": "TestRepo1"},
-            {"name": "TestRepo2"}
+            {"name": "Triangle567"},
+            {"name": "Square567"}
         ]
 
-        # Fake commits response for repo1 (3 commits)
-        commits_response_1 = Mock()
-        commits_response_1.status_code = 200
-        commits_response_1.json.return_value = [{}, {}, {}]
+        # Mock response for: GET /repos/<id>/Triangle567/commits
+        commits_triangle = Mock()
+        commits_triangle.status_code = 200
+        commits_triangle.json.return_value = [{}, {}, {}]  # 3 commits
 
-        # Fake commits response for repo2 (2 commits)
-        commits_response_2 = Mock()
-        commits_response_2.status_code = 200
-        commits_response_2.json.return_value = [{}, {}]
+        # Mock response for: GET /repos/<id>/Square567/commits
+        commits_square = Mock()
+        commits_square.status_code = 200
+        commits_square.json.return_value = [{}, {}]  # 2 commits
 
-        # requests.get called 3 times total
-        mock_get.side_effect = [repos_response, commits_response_1, commits_response_2]
+        # requests.get will be called 3 times total
+        mock_get.side_effect = [
+            repos_response,
+            commits_triangle,
+            commits_square
+        ]
 
         result = get_repo_commit_counts("fakeuser")
-        self.assertEqual(result, [("TestRepo1", 3), ("TestRepo2", 2)])
+
+        self.assertEqual(result, [
+            ("Triangle567", 3),
+            ("Square567", 2)
+        ])
+
+        # Optional: verify number of API calls
+        self.assertEqual(mock_get.call_count, 3)
 
 
 if __name__ == "__main__":
