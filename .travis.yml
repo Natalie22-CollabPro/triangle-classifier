@@ -3,21 +3,18 @@ language: python
 python:
   - "3.11"
 
-# Install dependencies
 install:
   - pip install --upgrade pip
-  - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  - pip install -r requirements.txt || echo "No requirements.txt found"
 
-# Run unit tests
 script:
   - python -m unittest discover -v
 
-# Build only these branches
 branches:
   only:
     - main
     - HW03a_Mocking
 
-# Cache pip dependencies
 cache:
-  pip: true
+  directories:
+    - $HOME/.cache/pip
